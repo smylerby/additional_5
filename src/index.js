@@ -1,37 +1,21 @@
 module.exports = function check(str, bracketsConfig) {
-    let len = str.length - 1;
     let stack = [];
-    for (let i in str){
-        for (let y in bracketsConfig){
-
-            if (str[i] === '|' && bracketsConfig[y][0] === '|'){
-
-                if (stack.indexOf('|') != -1){
-                    let top = stack.pop();
-                    if (top !== '|'){
-                    return false}
-                }
-                else {
-                    stack.push(str[i]);
-                }
+    let config = bracketsConfig;
+    for (let i of str){
+        for (let y of config){
+            if (i === y[0] && y[0] !== y[1] ) {
+                stack.push(i);
+            } else if (i === y[0] && y[0] === y[1]){
+                if (stack[stack.length-1] === i){
+                    stack.pop();
+                } else {stack.push(i);}
+            } else if (stack[stack.length-1] === y[0] && i === y[1]){
+                stack.pop();
+            } else if (i === y[1] && stack[stack.length-1] !== y[0]){
+                return false;
             }
-            
-            else if (str[i] === bracketsConfig[y][0]){
-                stack.push(str[i]);
-            }
-            else if (str[i] === bracketsConfig[y][1] ){
-                if (stack.length === 0) {
-                    return false;}
-
-                let top = stack.pop();
-                if (top !== bracketsConfig[y][0]){
-                    return false}
-            }
-        }
-
-        if (i == len) {
-            if (stack.length === 0){return true}
-            else {return false}
         }
     }
+    if (stack.length === 0) return true;
+    else return false;
 }
